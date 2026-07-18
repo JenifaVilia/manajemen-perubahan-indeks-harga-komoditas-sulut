@@ -324,28 +324,15 @@ const statusColors = {
     'no-data':'#c0c7d0',
 };
 
-const geojsonData = {
-    type: 'FeatureCollection',
-    features: [
-        { type:'Feature', properties:{kode:'7101',nama:'Bolaang Mongondow'},        geometry:{type:'Polygon',coordinates:[[[123.60,0.35],[124.10,0.35],[124.10,0.75],[123.60,0.75],[123.60,0.35]]]}},
-        { type:'Feature', properties:{kode:'7102',nama:'Minahasa'},                  geometry:{type:'Polygon',coordinates:[[[124.55,1.00],[125.05,1.00],[125.05,1.45],[124.55,1.45],[124.55,1.00]]]}},
-        { type:'Feature', properties:{kode:'7103',nama:'Kep. Sangihe'},              geometry:{type:'Polygon',coordinates:[[[125.50,3.30],[125.80,3.30],[125.80,3.65],[125.50,3.65],[125.50,3.30]]]}},
-        { type:'Feature', properties:{kode:'7104',nama:'Kep. Talaud'},               geometry:{type:'Polygon',coordinates:[[[126.60,4.05],[126.90,4.05],[126.90,4.40],[126.60,4.40],[126.60,4.05]]]}},
-        { type:'Feature', properties:{kode:'7105',nama:'Minahasa Selatan'},          geometry:{type:'Polygon',coordinates:[[[124.35,0.70],[124.75,0.70],[124.75,1.05],[124.35,1.05],[124.35,0.70]]]}},
-        { type:'Feature', properties:{kode:'7106',nama:'Minahasa Utara'},            geometry:{type:'Polygon',coordinates:[[[124.90,1.35],[125.30,1.35],[125.30,1.70],[124.90,1.70],[124.90,1.35]]]}},
-        { type:'Feature', properties:{kode:'7107',nama:'Bolmong Utara'},             geometry:{type:'Polygon',coordinates:[[[123.70,0.80],[124.15,0.80],[124.15,1.15],[123.70,1.15],[123.70,0.80]]]}},
-        { type:'Feature', properties:{kode:'7108',nama:'Kep. Sitaro'},               geometry:{type:'Polygon',coordinates:[[[125.10,2.55],[125.40,2.55],[125.40,2.90],[125.10,2.90],[125.10,2.55]]]}},
-        { type:'Feature', properties:{kode:'7109',nama:'Minahasa Tenggara'},         geometry:{type:'Polygon',coordinates:[[[124.70,0.65],[125.05,0.65],[125.05,0.95],[124.70,0.95],[124.70,0.65]]]}},
-        { type:'Feature', properties:{kode:'7110',nama:'Bolmong Selatan'},           geometry:{type:'Polygon',coordinates:[[[123.50,0.00],[123.85,0.00],[123.85,0.32],[123.50,0.32],[123.50,0.00]]]}},
-        { type:'Feature', properties:{kode:'7111',nama:'Bolmong Timur'},             geometry:{type:'Polygon',coordinates:[[[124.10,0.45],[124.50,0.45],[124.50,0.70],[124.10,0.70],[124.10,0.45]]]}},
-        { type:'Feature', properties:{kode:'7171',nama:'Kota Manado'},               geometry:{type:'Polygon',coordinates:[[[124.80,1.42],[124.96,1.42],[124.96,1.55],[124.80,1.55],[124.80,1.42]]]}},
-        { type:'Feature', properties:{kode:'7172',nama:'Kota Bitung'},               geometry:{type:'Polygon',coordinates:[[[125.15,1.42],[125.35,1.42],[125.35,1.58],[125.15,1.58],[125.15,1.42]]]}},
-        { type:'Feature', properties:{kode:'7173',nama:'Kota Tomohon'},              geometry:{type:'Polygon',coordinates:[[[124.82,1.27],[124.95,1.27],[124.95,1.42],[124.82,1.42],[124.82,1.27]]]}},
-        { type:'Feature', properties:{kode:'7174',nama:'Kota Kotamobagu'},           geometry:{type:'Polygon',coordinates:[[[124.28,0.70],[124.40,0.70],[124.40,0.80],[124.28,0.80],[124.28,0.70]]]}},
-    ]
-};
-
+let geojsonData = null;
 let petaStatusData = {};
+
+async function loadGeoJSON() {
+    if (geojsonData) return geojsonData;
+    const resp = await fetch('{{ asset("geojson/sulut.geojson") }}');
+    geojsonData = await resp.json();
+    return geojsonData;
+}
 
 async function initMap() {
     map = L.map('choropleth-map', {
@@ -361,6 +348,7 @@ async function initMap() {
         maxZoom: 19
     }).addTo(map);
 
+    await loadGeoJSON();
     await refreshPeta();
 }
 
@@ -375,9 +363,12 @@ async function refreshPeta() {
 
     if (geojsonLayer) geojsonLayer.remove();
 
+    if (!geojsonData) return;
+
     geojsonLayer = L.geoJSON(geojsonData, {
         style: feature => {
-            const s = petaStatusData[feature.properties.kode];
+            const kode = feature.properties.kode_wilayah;
+            const s = petaStatusData[kode];
             return {
                 fillColor:   s ? statusColors[s.status] : '#c0c7d0',
                 fillOpacity: 0.75,
@@ -386,7 +377,8 @@ async function refreshPeta() {
             };
         },
         onEachFeature: (feature, layer) => {
-            const s = petaStatusData[feature.properties.kode];
+            const kode = feature.properties.kode_wilayah;
+            const s = petaStatusData[kode];
             const nama = s?.nama || feature.properties.nama;
             const persen = s ? s.persen : '-';
             const sudah = s ? s.sudah : 0;

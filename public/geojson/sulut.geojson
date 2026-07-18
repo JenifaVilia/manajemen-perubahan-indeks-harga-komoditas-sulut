@@ -1,0 +1,125 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": { "kode_wilayah": "7101", "nama": "Bolaang Mongondow", "tipe": "kabupaten" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[123.85, 0.40], [124.05, 0.48], [124.25, 0.55], [124.42, 0.58], [124.55, 0.55], [124.60, 0.48], [124.55, 0.38], [124.42, 0.32], [124.25, 0.28], [124.10, 0.25], [123.95, 0.28], [123.85, 0.35], [123.85, 0.40]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "kode_wilayah": "7102", "nama": "Minahasa", "tipe": "kabupaten" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[124.75, 1.15], [124.82, 1.20], [124.92, 1.22], [125.00, 1.20], [125.05, 1.15], [125.02, 1.08], [124.95, 1.02], [124.85, 0.98], [124.78, 1.00], [124.72, 1.05], [124.72, 1.10], [124.75, 1.15]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "kode_wilayah": "7103", "nama": "Kepulauan Sangihe", "tipe": "kabupaten" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[125.45, 3.42], [125.52, 3.50], [125.60, 3.55], [125.68, 3.52], [125.72, 3.45], [125.70, 3.38], [125.62, 3.32], [125.52, 3.30], [125.45, 3.35], [125.45, 3.42]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "kode_wilayah": "7104", "nama": "Kepulauan Talaud", "tipe": "kabupaten" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[126.60, 3.85], [126.68, 3.92], [126.78, 3.95], [126.88, 3.92], [126.92, 3.85], [126.88, 3.78], [126.78, 3.72], [126.68, 3.75], [126.62, 3.78], [126.60, 3.85]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "kode_wilayah": "7105", "nama": "Minahasa Selatan", "tipe": "kabupaten" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[124.55, 0.85], [124.65, 0.92], [124.78, 0.95], [124.85, 0.92], [124.88, 0.85], [124.85, 0.78], [124.75, 0.72], [124.62, 0.70], [124.52, 0.75], [124.50, 0.80], [124.55, 0.85]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "kode_wilayah": "7106", "nama": "Minahasa Utara", "tipe": "kabupaten" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[124.88, 1.30], [124.95, 1.38], [125.05, 1.42], [125.15, 1.40], [125.20, 1.35], [125.18, 1.28], [125.10, 1.22], [125.00, 1.20], [124.90, 1.22], [124.85, 1.25], [124.88, 1.30]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "kode_wilayah": "7107", "nama": "Bolaang Mongondow Utara", "tipe": "kabupaten" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[123.88, 0.72], [123.98, 0.80], [124.10, 0.85], [124.22, 0.82], [124.28, 0.75], [124.25, 0.68], [124.15, 0.62], [124.02, 0.58], [123.92, 0.62], [123.85, 0.65], [123.88, 0.72]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "kode_wilayah": "7108", "nama": "Kepulauan Siau Tagulandang Biaro", "tipe": "kabupaten" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[125.35, 2.10], [125.42, 2.18], [125.50, 2.22], [125.58, 2.20], [125.62, 2.14], [125.58, 2.08], [125.48, 2.02], [125.40, 2.02], [125.35, 2.05], [125.35, 2.10]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "kode_wilayah": "7109", "nama": "Minahasa Tenggara", "tipe": "kabupaten" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[124.88, 0.82], [124.95, 0.88], [125.05, 0.92], [125.12, 0.90], [125.15, 0.84], [125.12, 0.78], [125.02, 0.72], [124.92, 0.70], [124.85, 0.74], [124.85, 0.78], [124.88, 0.82]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "kode_wilayah": "7110", "nama": "Bolaang Mongondow Selatan", "tipe": "kabupaten" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[123.68, 0.18], [123.78, 0.25], [123.90, 0.28], [124.00, 0.25], [124.05, 0.18], [124.00, 0.10], [123.88, 0.05], [123.78, 0.05], [123.70, 0.10], [123.68, 0.18]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "kode_wilayah": "7111", "nama": "Bolaang Mongondow Timur", "tipe": "kabupaten" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[124.55, 0.52], [124.62, 0.58], [124.72, 0.62], [124.82, 0.60], [124.85, 0.55], [124.82, 0.48], [124.72, 0.42], [124.62, 0.40], [124.55, 0.45], [124.55, 0.52]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "kode_wilayah": "7171", "nama": "Manado", "tipe": "kota" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[124.80, 1.42], [124.85, 1.48], [124.92, 1.52], [124.98, 1.50], [125.00, 1.45], [124.97, 1.40], [124.90, 1.38], [124.83, 1.38], [124.80, 1.42]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "kode_wilayah": "7172", "nama": "Bitung", "tipe": "kota" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[125.10, 1.38], [125.15, 1.44], [125.22, 1.48], [125.28, 1.46], [125.30, 1.40], [125.28, 1.35], [125.22, 1.32], [125.14, 1.32], [125.10, 1.35], [125.10, 1.38]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "kode_wilayah": "7173", "nama": "Tomohon", "tipe": "kota" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[124.82, 1.28], [124.86, 1.32], [124.92, 1.35], [124.96, 1.33], [124.98, 1.28], [124.95, 1.24], [124.88, 1.22], [124.83, 1.24], [124.82, 1.28]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "kode_wilayah": "7174", "nama": "Kotamobagu", "tipe": "kota" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[124.28, 0.68], [124.32, 0.73], [124.38, 0.76], [124.44, 0.74], [124.46, 0.70], [124.42, 0.65], [124.36, 0.62], [124.30, 0.63], [124.28, 0.68]]]
+      }
+    }
+  ]
+}

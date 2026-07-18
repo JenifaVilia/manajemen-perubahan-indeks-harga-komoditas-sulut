@@ -60,11 +60,18 @@ class EksporController extends Controller
 
         foreach ($alasans as $i => $a) {
             $row = $i + 2;
+            // Get the associated DataHarga for MtM value
+            $dh = DataHarga::where('periode_id', $a->periode_id)
+                ->where('wilayah_id', $a->wilayah_id)
+                ->where('komoditas_id', $a->komoditas_id)
+                ->first();
+
             $sheet->setCellValueByColumnAndRow(1,  $row, $i + 1);
             $sheet->setCellValueByColumnAndRow(2,  $row, $a->wilayah->nama_wilayah);
             $sheet->setCellValueByColumnAndRow(3,  $row, $a->komoditas->nama_komoditas);
             $sheet->setCellValueByColumnAndRow(4,  $row, $a->komoditas->kelompok);
             $sheet->setCellValueByColumnAndRow(5,  $row, $a->periode->nama);
+            $sheet->setCellValueByColumnAndRow(6,  $row, $dh ? round((float)$dh->inflasi_mtm, 4) : '-');
             $sheet->setCellValueByColumnAndRow(7,  $row, $a->alasan);
             $sheet->setCellValueByColumnAndRow(8,  $row, $a->faktors_label);
             $sheet->setCellValueByColumnAndRow(9,  $row, $a->rekomendasi ?? '');

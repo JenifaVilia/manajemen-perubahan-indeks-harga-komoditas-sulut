@@ -7,10 +7,15 @@
     // Hitung komoditas yang perlu diisi alasan (periode aktif)
     $perluInput = 0;
     if ($periodeAktif && $wilayah) {
+        $alasanKomoditasIds = \App\Models\AlasanPerubahan::where('periode_id', $periodeAktif->id)
+            ->where('wilayah_id', $wilayah->id)
+            ->whereIn('status', ['submitted', 'disetujui'])
+            ->pluck('komoditas_id');
+
         $perluInput = \App\Models\DataHarga::where('periode_id', $periodeAktif->id)
             ->where('wilayah_id', $wilayah->id)
             ->signifikan()
-            ->whereDoesntHave('alasanPerubahan', fn($q) => $q->whereIn('status', ['submitted', 'disetujui']))
+            ->whereNotIn('komoditas_id', $alasanKomoditasIds)
             ->count();
     }
 @endphp

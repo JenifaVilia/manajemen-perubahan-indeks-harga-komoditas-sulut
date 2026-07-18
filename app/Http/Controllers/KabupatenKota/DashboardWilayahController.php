@@ -44,15 +44,18 @@ class DashboardWilayahController extends Controller
                 ->where('wilayah_id', $wilayah->id)
                 ->avg('inflasi_mtm');
 
-            // Komoditas yang belum diisi alasan
+            // Komoditas yang belum diisi alasan (signifikan tapi belum ada alasan submitted/disetujui)
+            $alasanKomoditasIds = AlasanPerubahan::where('periode_id', $periode->id)
+                ->where('wilayah_id', $wilayah->id)
+                ->whereIn('status', ['submitted', 'disetujui'])
+                ->pluck('komoditas_id');
+
             $needsInput = DataHarga::with('komoditas')
                 ->where('periode_id', $periode->id)
                 ->where('wilayah_id', $wilayah->id)
                 ->signifikan()
-                ->whereDoesntHave('alasanPerubahan', fn($q) =>
-                    $q->where('wilayah_id', $wilayah->id)
-                      ->whereIn('status', ['submitted', 'disetujui']))
-                ->orderByDesc(fn($q) => $q->selectRaw('ABS(inflasi_mtm)'))
+                ->whereNotIn('komoditas_id', $alasanKomoditasIds)
+                ->orderByRaw('ABS(inflasi_mtm) DESC')
                 ->limit(10)
                 ->get();
 
@@ -61,15 +64,6 @@ class DashboardWilayahController extends Controller
                 ->where('periode_id', $periode->id)
                 ->where('wilayah_id', $wilayah->id)
                 ->where('status', 'revisi')
-                ->get();
-
-            // 12 bulan data harga for chart
-            $dataHargas = DataHarga::where('wilayah_id', $wilayah->id)
-                ->whereHas('periode', fn($q) => $q->whereIn('status', ['aktif', 'ditutup']))
-                ->with('periode')
-                ->orderBy(fn($q) => $q->select('tahun')->from('periodes')->whereColumn('id', 'periode_id'))
-                ->orderBy(fn($q) => $q->select('bulan')->from('periodes')->whereColumn('id', 'periode_id'))
-                ->limit(12 * max($totalKomoditas, 1))
                 ->get();
         }
 

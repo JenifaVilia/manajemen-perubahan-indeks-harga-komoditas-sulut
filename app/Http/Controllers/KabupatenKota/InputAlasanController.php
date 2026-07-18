@@ -24,10 +24,10 @@ class InputAlasanController extends Controller
         $filter    = $request->get('filter', 'perlu'); // perlu | semua | sudah | revisi
 
         // Ambil data harga wilayah ini untuk periode terpilih
-        $query = DataHarga::with(['komoditas', 'alasanPerubahan' => fn($q) => $q->where('wilayah_id', $wilayah->id)])
+        $query = DataHarga::with(['komoditas'])
             ->where('periode_id', $periodeId)
             ->where('wilayah_id', $wilayah->id)
-            ->orderByDesc(fn($q) => $q->selectRaw('ABS(inflasi_mtm)'));
+            ->orderByRaw('ABS(inflasi_mtm) DESC');
 
         $dataHargas = $query->get();
 
