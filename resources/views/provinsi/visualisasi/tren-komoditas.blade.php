@@ -70,11 +70,13 @@ async function refreshChart() {
             bottom: 0,
             textStyle: { fontSize: 11, fontFamily: 'Inter' }
         },
-        grid: { top: 20, left: 50, right: 30, bottom: 70 },
+        grid: { top: 20, left: 45, right: 15, bottom: 65 },
         xAxis: {
             type: 'category',
             data: data.labels,
-            axisLabel: { fontSize: 10, fontFamily: 'Inter', rotate: 30 },
+            axisLabel: { fontSize: 11, fontFamily: 'Inter', rotate: 0, margin: 12 },
+            axisLine: { lineStyle: { color: '#c0c7d0' } },
+            axisTick: { show: false }
         },
         yAxis: {
             type: 'value',
@@ -87,9 +89,13 @@ async function refreshChart() {
             data: ds.data,
             smooth: true,
             symbol: 'circle',
-            symbolSize: 5,
-            lineStyle: { width: 2, color: ds.color || null },
+            symbolSize: 6,
+            showSymbol: false,
+            lineStyle: { width: 1.75, color: ds.color || null },
             itemStyle: { color: ds.color || null },
+            emphasis: {
+                lineStyle: { width: 3.5 }
+            }
         }))
     };
 

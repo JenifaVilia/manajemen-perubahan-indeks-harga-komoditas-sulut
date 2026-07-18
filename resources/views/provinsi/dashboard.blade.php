@@ -10,24 +10,6 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>
     /* Dashboard-specific overrides */
-    .map-legend {
-        display: flex;
-        gap: 0.75rem;
-        flex-wrap: wrap;
-        align-items: center;
-        margin-top: 0.75rem;
-    }
-    .legend-item {
-        display: flex;
-        align-items: center;
-        gap: 0.375rem;
-        font-size: 0.75rem;
-        color: var(--color-on-surface-variant);
-    }
-    .legend-dot {
-        width: 12px; height: 12px;
-        border-radius: 3px;
-    }
 
     .wilayah-row-bar {
         height: 6px;
@@ -432,11 +414,13 @@ async function refreshChart() {
             bottom: 0,
             textStyle: { fontSize: 11, fontFamily: 'Inter' }
         },
-        grid: { top: 10, left: 40, right: 20, bottom: 60 },
+        grid: { top: 20, left: 45, right: 15, bottom: 65 },
         xAxis: {
             type: 'category',
             data: data.labels,
-            axisLabel: { fontSize: 10, fontFamily: 'Inter', rotate: 30 },
+            axisLabel: { fontSize: 11, fontFamily: 'Inter', rotate: 0, margin: 12 },
+            axisLine: { lineStyle: { color: '#c0c7d0' } },
+            axisTick: { show: false }
         },
         yAxis: {
             type: 'value',
@@ -449,9 +433,13 @@ async function refreshChart() {
             data: ds.data,
             smooth: true,
             symbol: 'circle',
-            symbolSize: 5,
-            lineStyle: { width: 2, color: ds.color || null },
+            symbolSize: 6,
+            showSymbol: false,
+            lineStyle: { width: 1.75, color: ds.color || null },
             itemStyle: { color: ds.color || null },
+            emphasis: {
+                lineStyle: { width: 3.5 }
+            }
         }))
     };
 

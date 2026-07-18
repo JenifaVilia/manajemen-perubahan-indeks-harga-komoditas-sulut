@@ -209,12 +209,18 @@ document.addEventListener('DOMContentLoaded', async () => {
                 return h;
             }},
             legend: { bottom: 0, textStyle: { fontSize: 11, fontFamily: 'Inter' } },
-            grid: { top: 10, left: 50, right: 20, bottom: 55 },
-            xAxis: { type: 'category', data: data.labels, axisLabel: { fontSize: 10, rotate: 30, fontFamily: 'Inter' } },
+            grid: { top: 20, left: 45, right: 15, bottom: 65 },
+            xAxis: { 
+                type: 'category', 
+                data: data.labels, 
+                axisLabel: { fontSize: 11, rotate: 0, fontFamily: 'Inter', margin: 12 },
+                axisLine: { lineStyle: { color: '#c0c7d0' } },
+                axisTick: { show: false }
+            },
             yAxis: { type: 'value', axisLabel: { formatter: '{value}%', fontSize: 10, fontFamily: 'Inter' }, splitLine: { lineStyle: { color: '#e5eeff' } } },
             series: [
-                { name: data.wilayah.label, type: 'line', data: data.wilayah.data, smooth: true, symbol: 'circle', symbolSize: 6, lineStyle: { width: 2.5, color: '#006699' }, itemStyle: { color: '#006699' }, areaStyle: { color: 'rgba(0,102,153,0.06)' } },
-                { name: data.provinsi.label, type: 'line', data: data.provinsi.data, smooth: true, symbol: 'circle', symbolSize: 4, lineStyle: { width: 1.5, color: '#fecb00', type: 'dashed' }, itemStyle: { color: '#fecb00' } },
+                { name: data.wilayah.label, type: 'line', data: data.wilayah.data, smooth: true, symbol: 'circle', symbolSize: 6, showSymbol: false, lineStyle: { width: 2.5, color: '#006699' }, itemStyle: { color: '#006699' }, areaStyle: { color: 'rgba(0,102,153,0.06)' }, emphasis: { lineStyle: { width: 3.5 } } },
+                { name: data.provinsi.label, type: 'line', data: data.provinsi.data, smooth: true, symbol: 'circle', symbolSize: 5, showSymbol: false, lineStyle: { width: 1.5, color: '#fecb00', type: 'dashed' }, itemStyle: { color: '#fecb00' }, emphasis: { lineStyle: { width: 2.5 } } },
             ]
         });
     } catch(e) {

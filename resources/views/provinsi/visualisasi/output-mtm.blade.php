@@ -33,8 +33,8 @@
                 <option value="{{ $p->id }}" {{ $p->id == $periodeId ? 'selected' : '' }}>{{ $p->nama }}</option>
             @endforeach
         </select>
-        <div class="map-legend" style="margin:0;flex:1;">
-            <div class="legend-item"><div class="legend-dot" style="background:rgba(186,26,26,0.35);"></div> Inflasi Tinggi (≥3%)</div>
+        <div class="map-legend ml-auto" style="gap:1rem;">
+            <div class="legend-item"><div class="legend-dot" style="background:rgba(186,26,26,0.35);"></div> Inflasi Tinggi (&ge;3%)</div>
             <div class="legend-item"><div class="legend-dot" style="background:rgba(186,26,26,0.15);"></div> Inflasi Sedang (1-3%)</div>
             <div class="legend-item"><div class="legend-dot" style="background:rgba(64,72,79,0.07);"></div> Stabil (0%)</div>
             <div class="legend-item"><div class="legend-dot" style="background:rgba(26,107,58,0.15);"></div> Deflasi Sedang</div>
