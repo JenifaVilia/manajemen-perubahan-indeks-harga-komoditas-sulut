@@ -27,8 +27,7 @@ Route::get('/login', [AuthenticatedSessionController::class, 'create'])
 Route::post('/login', [AuthenticatedSessionController::class, 'store'])
     ->middleware('guest');
 
-Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
-    ->middleware('auth')
+Route::match(['get', 'post'], '/logout', [AuthenticatedSessionController::class, 'destroy'])
     ->name('logout');
 
 // Redirect root to appropriate dashboard
