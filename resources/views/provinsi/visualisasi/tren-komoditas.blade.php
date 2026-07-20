@@ -19,6 +19,13 @@
                 <option value="{{ $k->id }}" {{ $k->id == $komoditasId ? 'selected' : '' }}>{{ $k->nama_komoditas }}</option>
             @endforeach
         </select>
+        <label class="form-label" style="margin:0;white-space:nowrap;margin-left:1rem;">Tipe Indeks:</label>
+        <select class="form-control" style="width:auto;" id="tipe-indeks-select" onchange="refreshChart()">
+            <option value="IHK" {{ ($tipeIndeks ?? 'IHK') === 'IHK' ? 'selected' : '' }}>IHK (Indeks Harga Konsumen)</option>
+            <option value="IHPB" {{ ($tipeIndeks ?? 'IHK') === 'IHPB' ? 'selected' : '' }}>IHPB (Indeks Harga Perdagangan Besar)</option>
+            <option value="IPP" {{ ($tipeIndeks ?? 'IHK') === 'IPP' ? 'selected' : '' }}>IPP (Indeks Harga Produsen)</option>
+            <option value="IPH" {{ ($tipeIndeks ?? 'IHK') === 'IPH' ? 'selected' : '' }}>IPH (Indeks Harga Petani)</option>
+        </select>
     </div>
 </div>
 
@@ -46,10 +53,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function refreshChart() {
     const komoditasId = document.getElementById('komoditas-select').value;
+    const tipeIndeks  = document.getElementById('tipe-indeks-select').value;
     const selectedText = document.getElementById('komoditas-select').selectedOptions[0]?.text || '';
     document.getElementById('chart-komoditas-name').textContent = selectedText;
 
-    const url = `{{ route('provinsi.visualisasi.data-tabel') }}?komoditas_id=${komoditasId}`;
+    const url = `{{ route('provinsi.visualisasi.data-tabel') }}?komoditas_id=${komoditasId}&tipe_indeks=${tipeIndeks}`;
     const resp = await fetch(url, { headers: { 'Accept': 'application/json' } });
     const data = await resp.json();
 

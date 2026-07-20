@@ -8,7 +8,7 @@
         <h1 class="page-title">Tabel Relatif Harga</h1>
         <p class="page-subtitle">Perbandingan nilai komoditas antar wilayah per periode</p>
     </div>
-    <a href="{{ route('provinsi.ekspor.tabel-relatif', ['periode_id' => $periodeId]) }}" class="btn btn-secondary">
+    <a href="{{ route('provinsi.ekspor.tabel-relatif', ['periode_id' => $periodeId, 'tipe_indeks' => $tipeIndeks ?? 'IHK']) }}" class="btn btn-secondary">
         <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
         Ekspor Excel
     </a>
@@ -21,6 +21,12 @@
             @foreach($periodes as $p)
                 <option value="{{ $p->id }}" {{ $p->id == $periodeId ? 'selected' : '' }}>{{ $p->nama }}</option>
             @endforeach
+        </select>
+        <select name="tipe_indeks" class="form-control" style="width:auto" onchange="this.form.submit()">
+            <option value="IHK" {{ ($tipeIndeks ?? 'IHK') === 'IHK' ? 'selected' : '' }}>IHK (Indeks Harga Konsumen)</option>
+            <option value="IHPB" {{ ($tipeIndeks ?? 'IHK') === 'IHPB' ? 'selected' : '' }}>IHPB (Indeks Harga Perdagangan Besar)</option>
+            <option value="IPP" {{ ($tipeIndeks ?? 'IHK') === 'IPP' ? 'selected' : '' }}>IPP (Indeks Harga Produsen)</option>
+            <option value="IPH" {{ ($tipeIndeks ?? 'IHK') === 'IPH' ? 'selected' : '' }}>IPH (Indeks Harga Petani)</option>
         </select>
         <select name="metrik" class="form-control" style="width:auto" onchange="this.form.submit()">
             <option value="inflasi_mtm" {{ $metrik === 'inflasi_mtm' ? 'selected' : '' }}>Inflasi MtM (%)</option>

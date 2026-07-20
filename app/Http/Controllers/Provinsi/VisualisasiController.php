@@ -22,13 +22,16 @@ class VisualisasiController extends Controller
         $wilayahs     = Wilayah::kabupatenKota()->aktif()->orderBy('kode_wilayah')->get();
         $komoditas    = Komoditas::aktif()->orderBy('kode_komoditas')->get();
 
-        $periodeId = $request->get('periode_id', $periodeAktif?->id);
-        $metrik    = $request->get('metrik', 'inflasi_mtm'); // inflasi_mtm, inflasi_ytd, inflasi_yoy, harga_level
+        $periodeId  = $request->get('periode_id', $periodeAktif?->id);
+        $metrik     = $request->get('metrik', 'inflasi_mtm'); // inflasi_mtm, inflasi_ytd, inflasi_yoy, harga_level
+        $tipeIndeks = $request->get('tipe_indeks', 'IHK');
 
         // Build pivot: komoditas_id => [wilayah_id => nilai]
         $pivot = [];
         if ($periodeId) {
-            $data = DataHarga::where('periode_id', $periodeId)->get();
+            $data = DataHarga::where('periode_id', $periodeId)
+                ->where('tipe_indeks', $tipeIndeks)
+                ->get();
             foreach ($data as $d) {
                 $pivot[$d->komoditas_id][$d->wilayah_id] = $d->{$metrik};
             }
@@ -36,7 +39,7 @@ class VisualisasiController extends Controller
 
         return view('provinsi.visualisasi.tabel-relatif', compact(
             'periodes', 'wilayahs', 'komoditas', 'periodeAktif',
-            'periodeId', 'metrik', 'pivot'
+            'periodeId', 'metrik', 'tipeIndeks', 'pivot'
         ));
     }
 
@@ -50,13 +53,16 @@ class VisualisasiController extends Controller
         $wilayahs     = Wilayah::kabupatenKota()->aktif()->orderBy('kode_wilayah')->get();
         $komoditas    = Komoditas::aktif()->orderBy('kode_komoditas')->get();
 
-        $periodeId = $request->get('periode_id', $periodeAktif?->id);
+        $periodeId  = $request->get('periode_id', $periodeAktif?->id);
+        $tipeIndeks = $request->get('tipe_indeks', 'IHK');
 
         $pivot = [];
         $stats = ['max' => 0, 'min' => 0, 'avg' => 0, 'naik' => 0, 'turun' => 0, 'stabil' => 0];
 
         if ($periodeId) {
-            $data = DataHarga::where('periode_id', $periodeId)->get();
+            $data = DataHarga::where('periode_id', $periodeId)
+                ->where('tipe_indeks', $tipeIndeks)
+                ->get();
             $inflasi = $data->pluck('inflasi_mtm')->map(fn($v) => (float)$v);
 
             $stats['max']    = $inflasi->max() ?? 0;
@@ -73,7 +79,7 @@ class VisualisasiController extends Controller
 
         return view('provinsi.visualisasi.output-mtm', compact(
             'periodes', 'wilayahs', 'komoditas', 'periodeAktif',
-            'periodeId', 'pivot', 'stats'
+            'periodeId', 'tipeIndeks', 'pivot', 'stats'
         ));
     }
 
@@ -89,10 +95,11 @@ class VisualisasiController extends Controller
                             ->limit(12)->get()->reverse()->values();
 
         $komoditasId = $request->get('komoditas_id', $komoditasList->first()?->id);
+        $tipeIndeks  = $request->get('tipe_indeks', 'IHK');
         $komoditas   = $komoditasId ? Komoditas::find($komoditasId) : null;
 
         return view('provinsi.visualisasi.tren-komoditas', compact(
-            'komoditasList', 'wilayahs', 'periodes', 'komoditasId', 'komoditas'
+            'komoditasList', 'wilayahs', 'periodes', 'komoditasId', 'tipeIndeks', 'komoditas'
         ));
     }
 
@@ -103,6 +110,7 @@ class VisualisasiController extends Controller
     {
         $komoditasId = $request->get('komoditas_id');
         $wilayahId   = $request->get('wilayah_id');
+        $tipeIndeks  = $request->get('tipe_indeks', 'IHK');
 
         $periodes = Periode::whereIn('status', ['aktif', 'ditutup'])
             ->orderByDesc('tahun')->orderByDesc('bulan')
@@ -122,6 +130,7 @@ class VisualisasiController extends Controller
                     $val = DataHarga::where('periode_id', $p->id)
                         ->where('wilayah_id', $w->id)
                         ->where('komoditas_id', $komoditasId)
+                        ->where('tipe_indeks', $tipeIndeks)
                         ->value('inflasi_mtm');
                     $data[] = $val !== null ? round((float)$val, 4) : null;
                 }
@@ -146,6 +155,7 @@ class VisualisasiController extends Controller
                     $val = DataHarga::where('periode_id', $p->id)
                         ->where('wilayah_id', $wilayahId)
                         ->where('komoditas_id', $k->id)
+                        ->where('tipe_indeks', $tipeIndeks)
                         ->value('inflasi_mtm');
                     $data[] = $val !== null ? round((float)$val, 4) : null;
                 }

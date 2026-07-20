@@ -33,6 +33,12 @@
                 <option value="{{ $p->id }}" {{ $p->id == $periodeId ? 'selected' : '' }}>{{ $p->nama }}</option>
             @endforeach
         </select>
+        <select name="tipe_indeks" class="form-control" style="width:auto" onchange="this.form.submit()">
+            <option value="IHK" {{ ($tipeIndeks ?? 'IHK') === 'IHK' ? 'selected' : '' }}>IHK (Indeks Harga Konsumen)</option>
+            <option value="IHPB" {{ ($tipeIndeks ?? 'IHK') === 'IHPB' ? 'selected' : '' }}>IHPB (Indeks Harga Perdagangan Besar)</option>
+            <option value="IPP" {{ ($tipeIndeks ?? 'IHK') === 'IPP' ? 'selected' : '' }}>IPP (Indeks Harga Produsen)</option>
+            <option value="IPH" {{ ($tipeIndeks ?? 'IHK') === 'IPH' ? 'selected' : '' }}>IPH (Indeks Harga Petani)</option>
+        </select>
         <div class="map-legend ml-auto" style="gap:1rem;">
             <div class="legend-item"><div class="legend-dot" style="background:rgba(186,26,26,0.35);"></div> Inflasi Tinggi (&ge;3%)</div>
             <div class="legend-item"><div class="legend-dot" style="background:rgba(186,26,26,0.15);"></div> Inflasi Sedang (1-3%)</div>
