@@ -229,12 +229,39 @@ class DataHargaController extends Controller
             ->with('success', 'Data harga berhasil disimpan.');
     }
 
-    public function riwayat()
+    public function riwayat(Request $request)
     {
-        $riwayat = DataHarga::with(['periode', 'wilayah', 'komoditas', 'uploader'])
-            ->latest()
-            ->paginate(25);
-        return view('provinsi.data-harga.riwayat', compact('riwayat'));
+        $periodes  = Periode::orderByDesc('tahun')->orderByDesc('bulan')->get();
+        $wilayahs  = Wilayah::kabupatenKota()->aktif()->orderBy('kode_wilayah')->get();
+
+        $periodeId  = $request->get('periode_id');
+        $wilayahId  = $request->get('wilayah_id');
+        $tipeIndeks = $request->get('tipe_indeks');
+        $search     = $request->get('search');
+
+        $query = DataHarga::with(['periode', 'wilayah', 'komoditas', 'uploader']);
+
+        if ($periodeId) {
+            $query->where('periode_id', $periodeId);
+        }
+        if ($wilayahId) {
+            $query->where('wilayah_id', $wilayahId);
+        }
+        if ($tipeIndeks) {
+            $query->where('tipe_indeks', $tipeIndeks);
+        }
+        if ($search) {
+            $query->whereHas('komoditas', function ($q) use ($search) {
+                $q->where('nama_komoditas', 'like', "%{$search}%")
+                  ->orWhere('kode_komoditas', 'like', "%{$search}%");
+            });
+        }
+
+        $riwayat = $query->latest()->paginate(25)->withQueryString();
+
+        return view('provinsi.data-harga.riwayat', compact(
+            'riwayat', 'periodes', 'wilayahs', 'periodeId', 'wilayahId', 'tipeIndeks', 'search'
+        ));
     }
 
     public function downloadTemplate()
