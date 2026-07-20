@@ -58,7 +58,7 @@ class InputAlasanController extends Controller
 
         return view('wilayah.input-alasan.index', compact(
             'dataHargas', 'periodeAktif', 'periodes', 'wilayah',
-            'periodeId', 'filter', 'perluInputCount', 'faktors'
+            'periodeId', 'tipeIndeks', 'filter', 'perluInputCount', 'faktors'
         ));
     }
 

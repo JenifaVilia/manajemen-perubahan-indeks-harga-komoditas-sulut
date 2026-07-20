@@ -23,6 +23,12 @@
                 <option value="{{ $p->id }}" {{ $p->id == $periodeId ? 'selected' : '' }}>{{ $p->nama }}</option>
             @endforeach
         </select>
+        <select class="form-control" name="tipe_indeks" onchange="applyFilter()" id="filter-tipe" style="width:auto;">
+            <option value="IHK" {{ ($tipeIndeks ?? 'IHK') === 'IHK' ? 'selected' : '' }}>IHK (Indeks Harga Konsumen)</option>
+            <option value="IHPB" {{ ($tipeIndeks ?? '') === 'IHPB' ? 'selected' : '' }}>IHPB (Perdagangan Besar)</option>
+            <option value="IPP" {{ ($tipeIndeks ?? '') === 'IPP' ? 'selected' : '' }}>IPP (Indeks Harga Produsen)</option>
+            <option value="IPH" {{ ($tipeIndeks ?? '') === 'IPH' ? 'selected' : '' }}>IPH (Indeks Harga Petani)</option>
+        </select>
         <div class="tab-nav" style="border:none;gap:0.25rem;flex:1;">
             @foreach(['perlu' => 'Perlu Diisi', 'revisi' => 'Perlu Revisi', 'sudah' => 'Sudah Selesai', 'semua' => 'Semua'] as $key => $label)
             <button class="tab-btn {{ $filter === $key ? 'active' : '' }}" onclick="setFilter('{{ $key }}')">{{ $label }}</button>
@@ -167,11 +173,14 @@
 <script>
     function applyFilter() {
         const p = document.getElementById('filter-periode').value;
-        window.location.href = `{{ url()->current() }}?periode_id=${p}&filter={{ $filter }}`;
+        const t = document.getElementById('filter-tipe')?.value || 'IHK';
+        window.location.href = `{{ url()->current() }}?periode_id=${p}&tipe_indeks=${t}&filter={{ $filter }}`;
     }
 
     function setFilter(f) {
-        window.location.href = `{{ url()->current() }}?periode_id={{ $periodeId }}&filter=${f}`;
+        const p = document.getElementById('filter-periode').value;
+        const t = document.getElementById('filter-tipe')?.value || 'IHK';
+        window.location.href = `{{ url()->current() }}?periode_id=${p}&tipe_indeks=${t}&filter=${f}`;
     }
 
     function openAlasanModal(komoditasId, nama, mtm) {
