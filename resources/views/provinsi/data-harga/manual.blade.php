@@ -61,38 +61,49 @@
                         </div>
                     </div>
                     <hr style="margin:1rem 0;border-color:var(--color-outline-variant)">
-                    <div class="form-group">
-                        <label class="form-label">Harga Level (Rp) <span class="required">*</span></label>
-                        <input type="number" name="harga_level" class="form-control" step="0.01" min="0" value="{{ old('harga_level') }}" required placeholder="Contoh: 14500.00">
+                    <div class="form-group mb-4">
+                        <label class="form-label" style="font-size:0.95rem;font-weight:600;">Harga Level (Rp) <span class="required">*</span></label>
+                        <input type="number" name="harga_level" class="form-control" step="0.01" min="0" value="{{ old('harga_level') }}" required placeholder="Contoh: 14500.00" style="font-size:1.1rem;padding:0.6rem 0.75rem;">
+                        <small style="color:var(--color-on-surface-variant);display:block;margin-top:0.35rem;">
+                            💡 Sistem akan secara otomatis mengalkulasikan nilai **Perubahan Harga MtM (%)** berdasarkan perbandingan dengan harga level periode sebelumnya.
+                        </small>
                     </div>
-                    <div class="grid-3">
-                        <div class="form-group">
-                            <label class="form-label">MtM (%)</label>
-                            <input type="number" name="inflasi_mtm" class="form-control" step="0.0001" value="{{ old('inflasi_mtm') }}" placeholder="Contoh: 1.25">
+
+                    <details style="margin-top:1rem;padding:0.875rem;background:var(--color-surface-variant);border-radius:var(--radius-md);border:1px solid var(--color-outline-variant);">
+                        <summary style="cursor:pointer;font-weight:600;color:var(--color-primary);user-select:none;">
+                            ⚙️ Angka Resmi BPS & Andil (Opsional / Override Manual)
+                        </summary>
+                        <div style="margin-top:1rem;">
+                            <div class="grid-3">
+                                <div class="form-group">
+                                    <label class="form-label">MtM (%)</label>
+                                    <input type="number" name="inflasi_mtm" class="form-control" step="0.0001" value="{{ old('inflasi_mtm') }}" placeholder="Otomatis / Contoh: 1.25">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">YtD (%)</label>
+                                    <input type="number" name="inflasi_ytd" class="form-control" step="0.0001" value="{{ old('inflasi_ytd') }}" placeholder="Otomatis / Contoh: 2.10">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">YoY (%)</label>
+                                    <input type="number" name="inflasi_yoy" class="form-control" step="0.0001" value="{{ old('inflasi_yoy') }}" placeholder="Otomatis / Contoh: 5.45">
+                                </div>
+                            </div>
+                            <div class="grid-3" style="margin-top:0.5rem;">
+                                <div class="form-group">
+                                    <label class="form-label">Andil MtM</label>
+                                    <input type="number" name="andil_mtm" class="form-control" step="0.0001" value="{{ old('andil_mtm') }}" placeholder="Contoh: 0.1234">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Andil YtD</label>
+                                    <input type="number" name="andil_ytd" class="form-control" step="0.0001" value="{{ old('andil_ytd') }}" placeholder="Contoh: 0.4567">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Andil YoY</label>
+                                    <input type="number" name="andil_yoy" class="form-control" step="0.0001" value="{{ old('andil_yoy') }}" placeholder="Contoh: 0.8901">
+                                </div>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label class="form-label">YtD (%)</label>
-                            <input type="number" name="inflasi_ytd" class="form-control" step="0.0001" value="{{ old('inflasi_ytd') }}" placeholder="Contoh: 2.10">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">YoY (%)</label>
-                            <input type="number" name="inflasi_yoy" class="form-control" step="0.0001" value="{{ old('inflasi_yoy') }}" placeholder="Contoh: 5.45">
-                        </div>
-                    </div>
-                    <div class="grid-3">
-                        <div class="form-group">
-                            <label class="form-label">Andil MtM</label>
-                            <input type="number" name="andil_mtm" class="form-control" step="0.0001" value="{{ old('andil_mtm') }}" placeholder="Contoh: 0.1234">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Andil YtD</label>
-                            <input type="number" name="andil_ytd" class="form-control" step="0.0001" value="{{ old('andil_ytd') }}" placeholder="Contoh: 0.4567">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Andil YoY</label>
-                            <input type="number" name="andil_yoy" class="form-control" step="0.0001" value="{{ old('andil_yoy') }}" placeholder="Contoh: 0.8901">
-                        </div>
-                    </div>
+                    </details>
                 </div>
                 <div class="card-footer flex justify-between">
                     <a href="{{ route('provinsi.data-harga.index') }}" class="btn btn-ghost">Batal</a>
