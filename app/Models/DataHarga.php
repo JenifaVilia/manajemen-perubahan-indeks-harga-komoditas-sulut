@@ -60,6 +60,82 @@ class DataHarga extends Model
             ->whereColumn('periode_id', 'data_hargas.periode_id');
     }
 
+    protected static function booted(): void
+    {
+        static::saving(function (DataHarga $dataHarga) {
+            $dataHarga->autoKalkulasiInflasi();
+        });
+    }
+
+    /**
+     * Hitung nilai inflasi (MtM, YtD, YoY) secara otomatis berdasarkan harga level periode sebelumnya
+     */
+    public function autoKalkulasiInflasi(): void
+    {
+        if (!$this->harga_level || (float) $this->harga_level <= 0) {
+            return;
+        }
+
+        $periode = $this->periode ?? Periode::find($this->periode_id);
+        if (!$periode) {
+            return;
+        }
+
+        // 1. Hitung Inflasi MtM (Month-to-Month) jika belum terisi
+        if ($this->inflasi_mtm === null) {
+            $prevBulan = $periode->bulan == 1 ? 12 : $periode->bulan - 1;
+            $prevTahun = $periode->bulan == 1 ? $periode->tahun - 1 : $periode->tahun;
+
+            $prevPeriode = Periode::where('bulan', $prevBulan)->where('tahun', $prevTahun)->first();
+            if ($prevPeriode) {
+                $prevHarga = DataHarga::where('periode_id', $prevPeriode->id)
+                    ->where('wilayah_id', $this->wilayah_id)
+                    ->where('komoditas_id', $this->komoditas_id)
+                    ->where('tipe_indeks', $this->tipe_indeks)
+                    ->value('harga_level');
+
+                if ($prevHarga && (float) $prevHarga > 0) {
+                    $mtm = (((float)$this->harga_level - (float)$prevHarga) / (float)$prevHarga) * 100;
+                    $this->inflasi_mtm = round($mtm, 4);
+                }
+            }
+        }
+
+        // 2. Hitung Inflasi YtD (Year-to-Date) jika belum terisi
+        if ($this->inflasi_ytd === null) {
+            $desPeriode = Periode::where('bulan', 12)->where('tahun', $periode->tahun - 1)->first();
+            if ($desPeriode) {
+                $desHarga = DataHarga::where('periode_id', $desPeriode->id)
+                    ->where('wilayah_id', $this->wilayah_id)
+                    ->where('komoditas_id', $this->komoditas_id)
+                    ->where('tipe_indeks', $this->tipe_indeks)
+                    ->value('harga_level');
+
+                if ($desHarga && (float) $desHarga > 0) {
+                    $ytd = (((float)$this->harga_level - (float)$desHarga) / (float)$desHarga) * 100;
+                    $this->inflasi_ytd = round($ytd, 4);
+                }
+            }
+        }
+
+        // 3. Hitung Inflasi YoY (Year-on-Year) jika belum terisi
+        if ($this->inflasi_yoy === null) {
+            $yoyPeriode = Periode::where('bulan', $periode->bulan)->where('tahun', $periode->tahun - 1)->first();
+            if ($yoyPeriode) {
+                $yoyHarga = DataHarga::where('periode_id', $yoyPeriode->id)
+                    ->where('wilayah_id', $this->wilayah_id)
+                    ->where('komoditas_id', $this->komoditas_id)
+                    ->where('tipe_indeks', $this->tipe_indeks)
+                    ->value('harga_level');
+
+                if ($yoyHarga && (float) $yoyHarga > 0) {
+                    $yoy = (((float)$this->harga_level - (float)$yoyHarga) / (float)$yoyHarga) * 100;
+                    $this->inflasi_yoy = round($yoy, 4);
+                }
+            }
+        }
+    }
+
     /**
      * Menentukan apakah perubahan harga dianggap signifikan (threshold: ±1%)
      */
