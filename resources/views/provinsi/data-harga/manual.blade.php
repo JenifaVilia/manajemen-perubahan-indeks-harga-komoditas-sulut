@@ -20,7 +20,7 @@
                     Form Isian Data
                 </div>
             </div>
-            <form method="POST" action="{{ route('provinsi.data-harga.manual.simpan') }}">
+            <form method="POST" action="{{ route('provinsi.data-harga.manual.simpan') }}" data-confirm="Apakah Anda yakin ingin menyimpan data harga ini?">
                 @csrf
                 <div class="card-body">
                     <div class="grid-2">

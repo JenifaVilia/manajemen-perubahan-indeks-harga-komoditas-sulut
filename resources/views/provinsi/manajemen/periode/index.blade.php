@@ -53,17 +53,17 @@
                         <div class="flex gap-1">
                             @if($p->status === 'draft')
                                 <a href="{{ route('provinsi.periode.edit', $p) }}" class="btn btn-sm btn-secondary">Edit</a>
-                                <form method="POST" action="{{ route('provinsi.periode.buka', $p) }}" style="display:inline" onsubmit="return confirm('Buka periode ini? Semua Kab/Kota akan mendapat notifikasi.')">
+                                <form method="POST" action="{{ route('provinsi.periode.buka', $p) }}" style="display:inline" data-confirm="Buka periode '{{ $p->nama }}'? Semua Kab/Kota akan mendapat notifikasi pengisian data.">
                                     @csrf
                                     <button class="btn btn-sm btn-primary">Buka</button>
                                 </form>
-                                <form method="POST" action="{{ route('provinsi.periode.destroy', $p) }}" style="display:inline" onsubmit="return confirm('Hapus periode ini?')">
+                                <form method="POST" action="{{ route('provinsi.periode.destroy', $p) }}" style="display:inline" data-confirm="Apakah Anda yakin ingin menghapus periode '{{ $p->nama }}'?">
                                     @csrf @method('DELETE')
                                     <button class="btn btn-sm btn-danger">Hapus</button>
                                 </form>
                             @elseif($p->status === 'aktif')
                                 <a href="{{ route('provinsi.periode.edit', $p) }}" class="btn btn-sm btn-secondary">Edit</a>
-                                <form method="POST" action="{{ route('provinsi.periode.tutup', $p) }}" style="display:inline" onsubmit="return confirm('Tutup periode ini?')">
+                                <form method="POST" action="{{ route('provinsi.periode.tutup', $p) }}" style="display:inline" data-confirm="Apakah Anda yakin ingin menutup periode '{{ $p->nama }}'?">
                                     @csrf
                                     <button class="btn btn-sm btn-accent">Tutup</button>
                                 </form>

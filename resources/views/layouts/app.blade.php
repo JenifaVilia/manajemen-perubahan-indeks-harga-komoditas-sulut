@@ -132,14 +132,14 @@
             </div>
         </header>
 
-        <!-- Flash Messages -->
+        <!-- Flash Messages & Validation Errors -->
         @if(session('success'))
             <div id="flash-msg" style="margin:0; padding:0 var(--gutter);">
                 <div class="alert alert-success" style="margin-top:1rem; border-radius:var(--radius-lg);">
                     <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
                     </svg>
-                    {{ session('success') }}
+                    <div>{{ session('success') }}</div>
                 </div>
             </div>
         @endif
@@ -149,7 +149,24 @@
                     <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
                     </svg>
-                    {{ session('error') }}
+                    <div>{{ session('error') }}</div>
+                </div>
+            </div>
+        @endif
+        @if($errors->any())
+            <div id="flash-errors" style="margin:0; padding:0 var(--gutter);">
+                <div class="alert alert-error" style="margin-top:1rem; border-radius:var(--radius-lg); flex-direction:column; align-items:flex-start;">
+                    <div style="display:flex; align-items:center; gap:0.5rem; font-weight:600;">
+                        <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                        </svg>
+                        Terdapat kesalahan pada isian formulir:
+                    </div>
+                    <ul style="margin:0.5rem 0 0 1.75rem; padding:0; list-style-type:disc;">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
                 </div>
             </div>
         @endif
@@ -249,10 +266,22 @@
         loadNotifs();
     }
 
+    // Universal CRUD Confirmation Handler
+    document.addEventListener('submit', function(e) {
+        var form = e.target;
+        if (form.dataset.confirm) {
+            if (!confirm(form.dataset.confirm)) {
+                e.preventDefault();
+                return false;
+            }
+        }
+    });
+
     // Auto-dismiss flash messages
     setTimeout(() => {
         document.getElementById('flash-msg')?.remove();
-    }, 5000);
+        document.getElementById('flash-errors')?.remove();
+    }, 6000);
 </script>
 
 @stack('scripts')

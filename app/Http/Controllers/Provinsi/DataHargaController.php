@@ -48,17 +48,27 @@ class DataHargaController extends Controller
             // Get unformatted cell values so PhpSpreadsheet doesn't format numbers into strings like "15,500"
             $rows  = $sheet->toArray(null, true, false, true);
 
-            $parseNumber = function($val) {
+            $parseNumber = function($val, $min = -99999999.9999, $max = 99999999.9999) {
                 if ($val === null || $val === '') return null;
-                if (is_numeric($val)) return (float) $val;
-                $clean = str_replace([' ', 'Rp', 'rp'], '', trim((string)$val));
-                if (preg_match('/^\d{1,3}(\.\d{3})*,\d+$/', $clean)) {
-                    $clean = str_replace('.', '', $clean);
-                    $clean = str_replace(',', '.', $clean);
+                $num = null;
+                if (is_numeric($val)) {
+                    $num = (float) $val;
                 } else {
-                    $clean = str_replace(',', '', $clean);
+                    $clean = str_replace([' ', 'Rp', 'rp'], '', trim((string)$val));
+                    if (preg_match('/^\d{1,3}(\.\d{3})*,\d+$/', $clean)) {
+                        $clean = str_replace('.', '', $clean);
+                        $clean = str_replace(',', '.', $clean);
+                    } else {
+                        $clean = str_replace(',', '', $clean);
+                    }
+                    if (is_numeric($clean)) {
+                        $num = (float) $clean;
+                    }
                 }
-                return is_numeric($clean) ? (float) $clean : null;
+                if ($num !== null && ($num < $min || $num > $max)) {
+                    return null;
+                }
+                return $num;
             };
 
             // Find header row (search for 'Kode Komoditas' or 'kode_komoditas')
@@ -140,7 +150,7 @@ class DataHargaController extends Controller
                 }
 
                 $hargaLevelRaw = $row[$columnMap['harga_level']] ?? null;
-                $hargaLevel    = $parseNumber($hargaLevelRaw);
+                $hargaLevel    = $parseNumber($hargaLevelRaw, 0, 99999999.9999);
                 if ($hargaLevel === null || $hargaLevel < 0) {
                     $skipped++;
                     $errors[] = "Baris {$idx}: Harga level untuk kode '{$kode}' tidak valid.";
@@ -158,12 +168,12 @@ class DataHargaController extends Controller
                     ],
                     [
                         'harga_level' => $hargaLevel,
-                        'inflasi_mtm' => isset($columnMap['inflasi_mtm']) ? $parseNumber($row[$columnMap['inflasi_mtm']] ?? null) : null,
-                        'inflasi_ytd' => isset($columnMap['inflasi_ytd']) ? $parseNumber($row[$columnMap['inflasi_ytd']] ?? null) : null,
-                        'inflasi_yoy' => isset($columnMap['inflasi_yoy']) ? $parseNumber($row[$columnMap['inflasi_yoy']] ?? null) : null,
-                        'andil_mtm'   => isset($columnMap['andil_mtm'])   ? $parseNumber($row[$columnMap['andil_mtm']]   ?? null) : null,
-                        'andil_ytd'   => isset($columnMap['andil_ytd'])   ? $parseNumber($row[$columnMap['andil_ytd']]   ?? null) : null,
-                        'andil_yoy'   => isset($columnMap['andil_yoy'])   ? $parseNumber($row[$columnMap['andil_yoy']]   ?? null) : null,
+                        'inflasi_mtm' => isset($columnMap['inflasi_mtm']) ? $parseNumber($row[$columnMap['inflasi_mtm']] ?? null, -1000, 1000) : null,
+                        'inflasi_ytd' => isset($columnMap['inflasi_ytd']) ? $parseNumber($row[$columnMap['inflasi_ytd']] ?? null, -1000, 1000) : null,
+                        'inflasi_yoy' => isset($columnMap['inflasi_yoy']) ? $parseNumber($row[$columnMap['inflasi_yoy']] ?? null, -1000, 1000) : null,
+                        'andil_mtm'   => isset($columnMap['andil_mtm'])   ? $parseNumber($row[$columnMap['andil_mtm']]   ?? null, -999.9999, 999.9999) : null,
+                        'andil_ytd'   => isset($columnMap['andil_ytd'])   ? $parseNumber($row[$columnMap['andil_ytd']]   ?? null, -999.9999, 999.9999) : null,
+                        'andil_yoy'   => isset($columnMap['andil_yoy'])   ? $parseNumber($row[$columnMap['andil_yoy']]   ?? null, -999.9999, 999.9999) : null,
                         'uploaded_by' => auth()->id(),
                         'sumber_file' => $file->getClientOriginalName(),
                     ]
@@ -203,30 +213,43 @@ class DataHargaController extends Controller
             'wilayah_id'   => ['required', 'exists:wilayahs,id'],
             'komoditas_id' => ['required', 'exists:komoditas,id'],
             'tipe_indeks'  => ['required', 'in:IHK,IHPB,IPP,IPH'],
-            'harga_level'  => ['required', 'numeric', 'min:0'],
-            'inflasi_mtm'  => ['nullable', 'numeric'],
-            'inflasi_ytd'  => ['nullable', 'numeric'],
-            'inflasi_yoy'  => ['nullable', 'numeric'],
-            'andil_mtm'    => ['nullable', 'numeric'],
-            'andil_ytd'    => ['nullable', 'numeric'],
-            'andil_yoy'    => ['nullable', 'numeric'],
+            'harga_level'  => ['required', 'numeric', 'min:0', 'max:99999999.9999'],
+            'inflasi_mtm'  => ['nullable', 'numeric', 'between:-1000,1000'],
+            'inflasi_ytd'  => ['nullable', 'numeric', 'between:-1000,1000'],
+            'inflasi_yoy'  => ['nullable', 'numeric', 'between:-1000,1000'],
+            'andil_mtm'    => ['nullable', 'numeric', 'between:-999.9999,999.9999'],
+            'andil_ytd'    => ['nullable', 'numeric', 'between:-999.9999,999.9999'],
+            'andil_yoy'    => ['nullable', 'numeric', 'between:-999.9999,999.9999'],
+        ], [
+            'harga_level.max'     => 'Nilai Harga Level tidak boleh melebihi 99.999.999.',
+            'harga_level.min'     => 'Nilai Harga Level tidak boleh bernilai negatif.',
+            'inflasi_mtm.between' => 'Nilai Inflasi MtM harus berada di antara -1000% dan 1000%.',
+            'inflasi_ytd.between' => 'Nilai Inflasi YtD harus berada di antara -1000% dan 1000%.',
+            'inflasi_yoy.between' => 'Nilai Inflasi YoY harus berada di antara -1000% dan 1000%.',
+            'andil_mtm.between'   => 'Nilai Andil MtM harus berada di antara -999.9999 dan 999.9999.',
+            'andil_ytd.between'   => 'Nilai Andil YtD harus berada di antara -999.9999 dan 999.9999.',
+            'andil_yoy.between'   => 'Nilai Andil YoY harus berada di antara -999.9999 dan 999.9999.',
         ]);
 
-        DataHarga::updateOrCreate(
-            [
-                'periode_id'   => $data['periode_id'],
-                'wilayah_id'   => $data['wilayah_id'],
-                'komoditas_id' => $data['komoditas_id'],
-                'tipe_indeks'  => $data['tipe_indeks'],
-            ],
-            [
-                ...$data,
-                'uploaded_by' => auth()->id(),
-            ]
-        );
+        try {
+            DataHarga::updateOrCreate(
+                [
+                    'periode_id'   => $data['periode_id'],
+                    'wilayah_id'   => $data['wilayah_id'],
+                    'komoditas_id' => $data['komoditas_id'],
+                    'tipe_indeks'  => $data['tipe_indeks'],
+                ],
+                [
+                    ...$data,
+                    'uploaded_by' => auth()->id(),
+                ]
+            );
 
-        return redirect()->route('provinsi.data-harga.index')
-            ->with('success', 'Data harga berhasil disimpan.');
+            return redirect()->route('provinsi.data-harga.index')
+                ->with('success', 'Data harga berhasil disimpan.');
+        } catch (\Throwable $e) {
+            return back()->withInput()->with('error', 'Gagal menyimpan data: Nilai yang dimasukkan melampaui batas yang diizinkan database.');
+        }
     }
 
     public function riwayat(Request $request)

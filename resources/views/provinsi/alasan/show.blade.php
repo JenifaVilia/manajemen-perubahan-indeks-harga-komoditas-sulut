@@ -64,11 +64,11 @@
             <div class="card-header"><div class="card-title">Aksi Review</div></div>
             <div class="card-body">
                 <div class="flex gap-2">
-                    <form method="POST" action="{{ route('provinsi.alasan.setujui', $alasan) }}" onsubmit="return confirm('Setujui alasan ini?')">
+                    <form method="POST" action="{{ route('provinsi.alasan.setujui', $alasan) }}" data-confirm="Apakah Anda yakin ingin MENYETUJUI laporan alasan perubahan harga ini?">
                         @csrf
                         <button class="btn btn-primary">✓ Setujui</button>
                     </form>
-                    <form method="POST" action="{{ route('provinsi.alasan.minta-revisi', $alasan) }}" id="revisi-form">
+                    <form method="POST" action="{{ route('provinsi.alasan.minta-revisi', $alasan) }}" id="revisi-form" data-confirm="Apakah Anda yakin ingin MEMINTA REVISI atas laporan alasan ini?">
                         @csrf
                         <div class="form-group" style="margin-bottom:0.5rem;">
                             <textarea name="catatan_provinsi" class="form-control" rows="2" placeholder="Catatan revisi untuk wilayah..." required minlength="5"></textarea>

@@ -48,7 +48,7 @@
                     Formulir Unggah Berkas
                 </div>
             </div>
-            <form method="POST" action="{{ route('provinsi.data-harga.upload.proses') }}" enctype="multipart/form-data">
+            <form method="POST" action="{{ route('provinsi.data-harga.upload.proses') }}" enctype="multipart/form-data" data-confirm="Apakah Anda yakin ingin mengunggah dan memproses file Excel ini?">
                 @csrf
                 <div class="card-body">
                     <div class="grid-2">

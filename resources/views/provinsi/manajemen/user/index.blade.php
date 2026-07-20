@@ -41,11 +41,11 @@
                         <div class="flex gap-1">
                             <a href="{{ route('provinsi.users.edit', $u) }}" class="btn btn-sm btn-secondary">Edit</a>
                             @if($u->id !== auth()->id())
-                            <form method="POST" action="{{ route('provinsi.users.reset-password', $u) }}" style="display:inline" onsubmit="return confirm('Reset password user ini?')">
+                            <form method="POST" action="{{ route('provinsi.users.reset-password', $u) }}" style="display:inline" data-confirm="Apakah Anda yakin ingin mereset password user '{{ $u->name }}'?">
                                 @csrf
                                 <button class="btn btn-sm btn-accent" title="Reset Password">🔑</button>
                             </form>
-                            <form method="POST" action="{{ route('provinsi.users.toggle-aktif', $u) }}" style="display:inline">
+                            <form method="POST" action="{{ route('provinsi.users.toggle-aktif', $u) }}" style="display:inline" data-confirm="Apakah Anda yakin ingin {{ $u->is_active ? 'menonaktifkan' : 'mengaktifkan' }} user '{{ $u->name }}'?">
                                 @csrf
                                 <button class="btn btn-sm {{ $u->is_active ? 'btn-ghost' : 'btn-primary' }}" title="{{ $u->is_active ? 'Nonaktifkan' : 'Aktifkan' }}">
                                     {{ $u->is_active ? '🚫' : '✅' }}
