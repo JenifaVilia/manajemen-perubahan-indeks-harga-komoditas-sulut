@@ -238,53 +238,91 @@
         </div>
     </div>
 
-    <!-- Top Komoditas Pendorong Inflasi -->
+    <!-- Top 5 Kenaikan & Penurunan Harga MtM (%) -->
     <div class="col-span-5">
         <div class="card">
             <div class="card-header">
-                <div class="card-title">
+                <div class="card-title" style="font-size:0.875rem;">
                     <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941"/>
                     </svg>
-                    Top 10 Pendorong Inflasi MtM
+                    Top Perubahan Harga MtM (%)
                 </div>
             </div>
-            <div class="card-body" style="padding:0.75rem;">
-                @forelse($topInflasi as $i => $dh)
-                @php
-                    $maxAndil = $topInflasi->max('andil_mtm') ?: 1;
-                    $persen = round(($dh->andil_mtm ?? 0) / $maxAndil * 100);
-                @endphp
-                <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;">
-                    <span style="width:16px;font-size:0.6875rem;color:var(--color-on-surface-variant);font-weight:600;text-align:right;flex-shrink:0;">{{ $i+1 }}</span>
-                    <div style="flex:1;min-width:0;">
-                        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:3px;">
-                            <span style="font-size:0.75rem;font-weight:600;color:var(--color-on-surface);truncate;" title="{{ $dh->komoditas->nama_komoditas }}">
-                                {{ Str::limit($dh->komoditas->nama_komoditas, 20) }}
-                            </span>
-                            <span style="font-size:0.6875rem;font-family:var(--font-mono);color:var(--color-error);font-weight:700;">
-                                +{{ number_format($dh->andil_mtm ?? 0, 4) }}
-                            </span>
-                        </div>
-                        <div class="topinflasi-bar">
-                            <div class="topinflasi-bar-fill" style="width:{{ $persen }}%"></div>
-                        </div>
-                        <div style="font-size:0.625rem;color:var(--color-on-surface-variant);margin-top:2px;">{{ $dh->wilayah->nama_wilayah }}</div>
+            <div class="card-body" style="padding:0.75rem;display:flex;flex-direction:column;gap:0.75rem;">
+                
+                {{-- Top 5 Kenaikan --}}
+                <div>
+                    <div style="font-size:0.75rem;font-weight:700;color:var(--color-error);margin-bottom:0.5rem;display:flex;align-items:center;gap:0.35rem;">
+                        <span>🔺 TOP 5 Kenaikan Harga Tertinggi</span>
                     </div>
+                    @forelse($topKenaikan as $i => $dh)
+                    @php
+                        $maxKenaikan = $topKenaikan->max('inflasi_mtm') ?: 1;
+                        $persen = round(((float)$dh->inflasi_mtm) / $maxKenaikan * 100);
+                    @endphp
+                    <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.4rem;">
+                        <span style="width:16px;font-size:0.6875rem;color:var(--color-on-surface-variant);font-weight:600;text-align:right;flex-shrink:0;">{{ $i+1 }}</span>
+                        <div style="flex:1;min-width:0;">
+                            <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:2px;">
+                                <span style="font-size:0.75rem;font-weight:600;color:var(--color-on-surface);" title="{{ $dh->komoditas->nama_komoditas }}">
+                                    {{ Str::limit($dh->komoditas->nama_komoditas, 18) }}
+                                </span>
+                                <span style="font-size:0.6875rem;font-family:var(--font-mono);color:var(--color-error);font-weight:700;">
+                                    +{{ number_format((float)$dh->inflasi_mtm, 4) }}%
+                                </span>
+                            </div>
+                            <div class="topinflasi-bar" style="height:4px;">
+                                <div class="topinflasi-bar-fill" style="width:{{ $persen }}%;background:var(--color-error);"></div>
+                            </div>
+                            <div style="font-size:0.625rem;color:var(--color-on-surface-variant);margin-top:1px;">{{ $dh->wilayah->nama_wilayah }}</div>
+                        </div>
+                    </div>
+                    @empty
+                    <div style="font-size:0.75rem;color:var(--color-on-surface-variant);font-style:italic;">Tidak ada komoditas naik.</div>
+                    @endforelse
                 </div>
-                @empty
-                <div style="text-align:center;padding:2rem;color:var(--color-on-surface-variant);font-size:0.8125rem;">
-                    Belum ada data harga untuk periode ini.
+
+                <hr style="border-color:var(--color-outline-variant);margin:0;">
+
+                {{-- Top 5 Penurunan --}}
+                <div>
+                    <div style="font-size:0.75rem;font-weight:700;color:var(--color-success);margin-bottom:0.5rem;display:flex;align-items:center;gap:0.35rem;">
+                        <span>🔻 TOP 5 Penurunan Harga Terbesar</span>
+                    </div>
+                    @forelse($topPenurunan as $i => $dh)
+                    @php
+                        $minPenurunan = abs($topPenurunan->min('inflasi_mtm') ?: -1);
+                        $persen = round(abs((float)$dh->inflasi_mtm) / $minPenurunan * 100);
+                    @endphp
+                    <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.4rem;">
+                        <span style="width:16px;font-size:0.6875rem;color:var(--color-on-surface-variant);font-weight:600;text-align:right;flex-shrink:0;">{{ $i+1 }}</span>
+                        <div style="flex:1;min-width:0;">
+                            <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:2px;">
+                                <span style="font-size:0.75rem;font-weight:600;color:var(--color-on-surface);" title="{{ $dh->komoditas->nama_komoditas }}">
+                                    {{ Str::limit($dh->komoditas->nama_komoditas, 18) }}
+                                </span>
+                                <span style="font-size:0.6875rem;font-family:var(--font-mono);color:var(--color-success);font-weight:700;">
+                                    {{ number_format((float)$dh->inflasi_mtm, 4) }}%
+                                </span>
+                            </div>
+                            <div class="topinflasi-bar" style="height:4px;background:rgba(46,125,50,0.15);">
+                                <div class="topinflasi-bar-fill" style="width:{{ $persen }}%;background:var(--color-success);"></div>
+                            </div>
+                            <div style="font-size:0.625rem;color:var(--color-on-surface-variant);margin-top:1px;">{{ $dh->wilayah->nama_wilayah }}</div>
+                        </div>
+                    </div>
+                    @empty
+                    <div style="font-size:0.75rem;color:var(--color-on-surface-variant);font-style:italic;">Tidak ada komoditas turun.</div>
+                    @endforelse
                 </div>
-                @endforelse
+
             </div>
-            @if($topInflasi->count() > 0)
             <div class="card-footer">
                 <a href="{{ route('provinsi.visualisasi.tren-komoditas') }}" style="font-size:0.75rem;font-weight:600;color:var(--color-primary-container);">
                     Lihat analisis tren komoditas →
                 </a>
             </div>
-            @endif
         </div>
     </div>
 </div>

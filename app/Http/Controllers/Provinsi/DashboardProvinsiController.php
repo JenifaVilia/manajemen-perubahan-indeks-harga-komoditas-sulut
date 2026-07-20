@@ -70,14 +70,24 @@ class DashboardProvinsiController extends Controller
         // KPI — Alasan pending review
         $pendingReview = AlasanPerubahan::submitted()->count();
 
-        // Top 10 Komoditas Pendorong Inflasi
-        $topInflasi = [];
+        // Top 5 Kenaikan & Penurunan Harga MtM (%)
+        $topKenaikan = [];
+        $topPenurunan = [];
         if ($periodeAktif) {
-            $topInflasi = DataHarga::with(['komoditas', 'wilayah'])
+            $topKenaikan = DataHarga::with(['komoditas', 'wilayah'])
                 ->where('periode_id', $periodeAktif->id)
+                ->where('tipe_indeks', 'IHK')
                 ->where('inflasi_mtm', '>', 0)
-                ->orderByDesc('andil_mtm')
-                ->limit(10)
+                ->orderByDesc('inflasi_mtm')
+                ->limit(5)
+                ->get();
+
+            $topPenurunan = DataHarga::with(['komoditas', 'wilayah'])
+                ->where('periode_id', $periodeAktif->id)
+                ->where('tipe_indeks', 'IHK')
+                ->where('inflasi_mtm', '<', 0)
+                ->orderBy('inflasi_mtm')
+                ->limit(5)
                 ->get();
         }
 
@@ -94,7 +104,8 @@ class DashboardProvinsiController extends Controller
             'totalPerluInput',
             'rataInflasi',
             'pendingReview',
-            'topInflasi',
+            'topKenaikan',
+            'topPenurunan',
             'periodes'
         ));
     }
