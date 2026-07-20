@@ -23,6 +23,13 @@
                 <option value="{{ $p->id }}" {{ $p->id == $periodeId ? 'selected' : '' }}>{{ $p->nama }}</option>
             @endforeach
         </select>
+        <select name="tipe_indeks" class="form-control" style="width:auto" onchange="this.form.submit()">
+            <option value="">Semua Tipe Indeks</option>
+            <option value="IHK" {{ ($tipeIndeks ?? '') === 'IHK' ? 'selected' : '' }}>IHK (Indeks Harga Konsumen)</option>
+            <option value="IHPB" {{ ($tipeIndeks ?? '') === 'IHPB' ? 'selected' : '' }}>IHPB (Indeks Harga Perdagangan Besar)</option>
+            <option value="IPP" {{ ($tipeIndeks ?? '') === 'IPP' ? 'selected' : '' }}>IPP (Indeks Harga Produsen)</option>
+            <option value="IPH" {{ ($tipeIndeks ?? '') === 'IPH' ? 'selected' : '' }}>IPH (Indeks Harga Petani)</option>
+        </select>
         <select name="komoditas_id" class="form-control" style="width:auto" onchange="this.form.submit()">
             <option value="">Semua Komoditas</option>
             @foreach($komoditas as $k)
@@ -40,6 +47,7 @@
                 <tr>
                     <th>Periode</th>
                     <th>Komoditas</th>
+                    <th>Tipe</th>
                     <th class="num">Harga Level</th>
                     <th class="num">MtM (%)</th>
                     <th class="num">YtD (%)</th>
@@ -53,6 +61,7 @@
                 <tr>
                     <td style="white-space:nowrap">{{ $dh->periode->nama }}</td>
                     <td style="font-weight:600">{{ $dh->komoditas->nama_komoditas }}</td>
+                    <td><span class="badge badge-blue">{{ $dh->tipe_indeks }}</span></td>
                     <td class="num">{{ number_format($dh->harga_level ?? 0, 2) }}</td>
                     <td class="num {{ $mtm > 0 ? 'inflasi-naik' : ($mtm < 0 ? 'inflasi-turun' : 'inflasi-stabil') }}">
                         {{ $mtm > 0 ? '+' : '' }}{{ number_format($mtm, 4) }}
@@ -62,7 +71,7 @@
                     <td class="num">{{ number_format($dh->andil_mtm ?? 0, 4) }}</td>
                 </tr>
                 @empty
-                <tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--color-on-surface-variant)">Belum ada data harga.</td></tr>
+                <tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--color-on-surface-variant)">Belum ada data harga.</td></tr>
                 @endforelse
             </tbody>
         </table>

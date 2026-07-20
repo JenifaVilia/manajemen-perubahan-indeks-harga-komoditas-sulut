@@ -19,16 +19,18 @@ class HistoriHargaController extends Controller
 
         $periodeId   = $request->get('periode_id');
         $komoditasId = $request->get('komoditas_id');
+        $tipeIndeks  = $request->get('tipe_indeks', 'IHK');
 
         $query = DataHarga::with(['komoditas', 'periode'])
             ->where('wilayah_id', $wilayah->id)
             ->when($periodeId, fn($q) => $q->where('periode_id', $periodeId))
             ->when($komoditasId, fn($q) => $q->where('komoditas_id', $komoditasId))
+            ->when($tipeIndeks, fn($q) => $q->where('tipe_indeks', $tipeIndeks))
             ->orderByDesc('periode_id');
 
         $dataHargas = $query->paginate(30)->withQueryString();
 
-        return view('wilayah.histori.index', compact('dataHargas', 'periodes', 'komoditas', 'periodeId', 'komoditasId', 'wilayah'));
+        return view('wilayah.histori.index', compact('dataHargas', 'periodes', 'komoditas', 'periodeId', 'komoditasId', 'tipeIndeks', 'wilayah'));
     }
 
     public function chartData(Request $request): JsonResponse
