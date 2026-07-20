@@ -71,7 +71,7 @@
 </div>
 
 <div class="footer">
-    Dokumen ini digenerate otomatis oleh SIPERHARGA Sulut — Sistem Manajemen Perubahan Harga Komoditas Provinsi Sulawesi Utara
+    Dokumen ini digenerate otomatis oleh Sistem Manajemen Perubahan Harga Komoditas SULUT
 </div>
 </body>
 </html>

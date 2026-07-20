@@ -159,4 +159,4 @@ Use a dedicated categorical palette that begins with the Primary Blue. Avoid gra
 - **Accent:** Solid Gold with dark blue text for urgent or "New" actions.
 
 ### Input Fields
-Rectangular with a 1px gray border. On focus, the border transitions to Primary Blue with a 2px outer "halo" of the same color at 10% opacity. Labels are always persistent above the field.
+Rectangular with a 1px gray border. On focus, the border transitions to Primary Blue with a 2px outer "halo" of the same color at 10% opacity. Labels are always persistent above the field.               

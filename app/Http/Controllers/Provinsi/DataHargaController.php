@@ -45,13 +45,27 @@ class DataHargaController extends Controller
         try {
             $spreadsheet = IOFactory::load($file->getPathname());
             $sheet = $spreadsheet->getActiveSheet();
-            $rows  = $sheet->toArray(null, true, true, true);
+            // Get unformatted cell values so PhpSpreadsheet doesn't format numbers into strings like "15,500"
+            $rows  = $sheet->toArray(null, true, false, true);
+
+            $parseNumber = function($val) {
+                if ($val === null || $val === '') return null;
+                if (is_numeric($val)) return (float) $val;
+                $clean = str_replace([' ', 'Rp', 'rp'], '', trim((string)$val));
+                if (preg_match('/^\d{1,3}(\.\d{3})*,\d+$/', $clean)) {
+                    $clean = str_replace('.', '', $clean);
+                    $clean = str_replace(',', '.', $clean);
+                } else {
+                    $clean = str_replace(',', '', $clean);
+                }
+                return is_numeric($clean) ? (float) $clean : null;
+            };
 
             // Find header row (search for 'Kode Komoditas' or 'kode_komoditas')
             $headerRow = null;
             $headerIdx = 0;
             foreach ($rows as $idx => $row) {
-                $rowValues = array_map(fn($v) => strtolower(trim($v ?? '')), $row);
+                $rowValues = array_map(fn($v) => strtolower(trim((string)($v ?? ''))), $row);
                 if (in_array('kode komoditas', $rowValues) || in_array('kode_komoditas', $rowValues)) {
                     $headerRow = $row;
                     $headerIdx = $idx;
@@ -88,7 +102,7 @@ class DataHargaController extends Controller
             ];
 
             foreach ($headerRow as $col => $val) {
-                $normalized = strtolower(trim($val ?? ''));
+                $normalized = strtolower(trim((string)($val ?? '')));
                 if (isset($fieldAliases[$normalized])) {
                     $columnMap[$fieldAliases[$normalized]] = $col;
                 }
@@ -111,8 +125,12 @@ class DataHargaController extends Controller
             foreach ($rows as $idx => $row) {
                 if ($idx <= $headerIdx) continue; // Skip header and above
 
-                $kode = trim($row[$columnMap['kode_komoditas']] ?? '');
+                $kode = trim((string)($row[$columnMap['kode_komoditas']] ?? ''));
                 if (empty($kode)) continue; // Skip empty rows
+
+                if (strlen($kode) < 3 && is_numeric($kode)) {
+                    $kode = str_pad($kode, 3, '0', STR_PAD_LEFT);
+                }
 
                 // Validate komoditas exists
                 if (!$validKomoditas->has($kode)) {
@@ -121,8 +139,9 @@ class DataHargaController extends Controller
                     continue;
                 }
 
-                $hargaLevel = $row[$columnMap['harga_level']] ?? null;
-                if (!is_numeric($hargaLevel) || $hargaLevel < 0) {
+                $hargaLevelRaw = $row[$columnMap['harga_level']] ?? null;
+                $hargaLevel    = $parseNumber($hargaLevelRaw);
+                if ($hargaLevel === null || $hargaLevel < 0) {
                     $skipped++;
                     $errors[] = "Baris {$idx}: Harga level untuk kode '{$kode}' tidak valid.";
                     continue;
@@ -138,13 +157,13 @@ class DataHargaController extends Controller
                         'tipe_indeks'  => $tipeIndeks,
                     ],
                     [
-                        'harga_level' => (float) $hargaLevel,
-                        'inflasi_mtm' => isset($columnMap['inflasi_mtm']) ? (float) ($row[$columnMap['inflasi_mtm']] ?? 0) : null,
-                        'inflasi_ytd' => isset($columnMap['inflasi_ytd']) ? (float) ($row[$columnMap['inflasi_ytd']] ?? 0) : null,
-                        'inflasi_yoy' => isset($columnMap['inflasi_yoy']) ? (float) ($row[$columnMap['inflasi_yoy']] ?? 0) : null,
-                        'andil_mtm'   => isset($columnMap['andil_mtm'])   ? (float) ($row[$columnMap['andil_mtm']] ?? 0)   : null,
-                        'andil_ytd'   => isset($columnMap['andil_ytd'])   ? (float) ($row[$columnMap['andil_ytd']] ?? 0)   : null,
-                        'andil_yoy'   => isset($columnMap['andil_yoy'])   ? (float) ($row[$columnMap['andil_yoy']] ?? 0)   : null,
+                        'harga_level' => $hargaLevel,
+                        'inflasi_mtm' => isset($columnMap['inflasi_mtm']) ? $parseNumber($row[$columnMap['inflasi_mtm']] ?? null) : null,
+                        'inflasi_ytd' => isset($columnMap['inflasi_ytd']) ? $parseNumber($row[$columnMap['inflasi_ytd']] ?? null) : null,
+                        'inflasi_yoy' => isset($columnMap['inflasi_yoy']) ? $parseNumber($row[$columnMap['inflasi_yoy']] ?? null) : null,
+                        'andil_mtm'   => isset($columnMap['andil_mtm'])   ? $parseNumber($row[$columnMap['andil_mtm']]   ?? null) : null,
+                        'andil_ytd'   => isset($columnMap['andil_ytd'])   ? $parseNumber($row[$columnMap['andil_ytd']]   ?? null) : null,
+                        'andil_yoy'   => isset($columnMap['andil_yoy'])   ? $parseNumber($row[$columnMap['andil_yoy']]   ?? null) : null,
                         'uploaded_by' => auth()->id(),
                         'sumber_file' => $file->getClientOriginalName(),
                     ]
