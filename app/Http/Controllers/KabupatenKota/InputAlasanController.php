@@ -20,13 +20,15 @@ class InputAlasanController extends Controller
         $periodeAktif = Periode::where('status', 'aktif')->first();
         $periodes     = Periode::orderByDesc('tahun')->orderByDesc('bulan')->limit(12)->get();
 
-        $periodeId = $request->get('periode_id', $periodeAktif?->id);
-        $filter    = $request->get('filter', 'perlu'); // perlu | semua | sudah | revisi
+        $periodeId  = $request->get('periode_id', $periodeAktif?->id);
+        $tipeIndeks = $request->get('tipe_indeks', 'IHK');
+        $filter     = $request->get('filter', 'perlu'); // perlu | semua | sudah | revisi
 
         // Ambil data harga wilayah ini untuk periode terpilih
         $query = DataHarga::with(['komoditas'])
             ->where('periode_id', $periodeId)
             ->where('wilayah_id', $wilayah->id)
+            ->where('tipe_indeks', $tipeIndeks)
             ->orderByRaw('ABS(inflasi_mtm) DESC');
 
         $dataHargas = $query->get();
