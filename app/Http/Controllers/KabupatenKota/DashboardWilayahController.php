@@ -86,6 +86,7 @@ class DashboardWilayahController extends Controller
         foreach ($periodes as $p) {
             $avg = DataHarga::where('periode_id', $p->id)
                 ->where('wilayah_id', $wilayah->id)
+                ->where('tipe_indeks', 'IHK')
                 ->avg('inflasi_mtm');
             $data[] = $avg !== null ? round((float)$avg, 4) : null;
         }
@@ -93,7 +94,9 @@ class DashboardWilayahController extends Controller
         // Rata-rata provinsi untuk komparasi
         $dataProvinsi = [];
         foreach ($periodes as $p) {
-            $avg = DataHarga::where('periode_id', $p->id)->avg('inflasi_mtm');
+            $avg = DataHarga::where('periode_id', $p->id)
+                ->where('tipe_indeks', 'IHK')
+                ->avg('inflasi_mtm');
             $dataProvinsi[] = $avg !== null ? round((float)$avg, 4) : null;
         }
 

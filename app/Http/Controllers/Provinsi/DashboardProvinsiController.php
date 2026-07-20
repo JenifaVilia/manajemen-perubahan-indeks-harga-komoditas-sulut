@@ -149,8 +149,9 @@ class DashboardProvinsiController extends Controller
      */
     public function chartInflasi(Request $request): JsonResponse
     {
-        $wilayahId = $request->get('wilayah_id');
-        $periodes  = Periode::whereIn('status', ['aktif', 'ditutup'])
+        $wilayahId  = $request->get('wilayah_id');
+        $tipeIndeks = $request->get('tipe_indeks', 'IHK');
+        $periodes   = Periode::whereIn('status', ['aktif', 'ditutup'])
             ->orderByDesc('tahun')->orderByDesc('bulan')
             ->limit(12)->get()->reverse()->values();
 
@@ -160,6 +161,7 @@ class DashboardProvinsiController extends Controller
             foreach ($periodes as $p) {
                 $avg = DataHarga::where('periode_id', $p->id)
                     ->where('wilayah_id', $wilayahId)
+                    ->where('tipe_indeks', $tipeIndeks)
                     ->avg('inflasi_mtm');
                 $data[] = $avg !== null ? round((float)$avg, 4) : null;
             }
@@ -177,7 +179,10 @@ class DashboardProvinsiController extends Controller
         foreach ($wilayahs as $i => $w) {
             $data = [];
             foreach ($periodes as $p) {
-                $avg = DataHarga::where('periode_id', $p->id)->where('wilayah_id', $w->id)->avg('inflasi_mtm');
+                $avg = DataHarga::where('periode_id', $p->id)
+                    ->where('wilayah_id', $w->id)
+                    ->where('tipe_indeks', $tipeIndeks)
+                    ->avg('inflasi_mtm');
                 $data[] = $avg !== null ? round((float)$avg, 4) : null;
             }
             $datasets[] = ['label' => $w->nama_wilayah, 'data' => $data, 'color' => $colors[$i % count($colors)]];
