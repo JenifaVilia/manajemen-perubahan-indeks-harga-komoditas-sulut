@@ -97,7 +97,7 @@ class DatabaseSeeder extends Seeder
 
         $usersByWilayahKode = [];
         foreach ($kabkotaUsers as $kode => $u) {
-            $user = User::firstOrCreate(
+            $user = User::firstOrCreate(   
                 ['email' => $u['email']],
                 [
                     'name'       => $u['nama'],
